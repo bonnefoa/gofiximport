@@ -159,15 +159,19 @@ func updateCandidates() *Candidates {
 	return candidates
 }
 
-func loadCandidates() *Candidates {
+func loadCandidates(cacheUpdate bool) *Candidates {
 	f, err := os.Open(cachePath)
-	if err != nil {
+	if err != nil || cacheUpdate {
 		return updateCandidates()
 	}
 	candidates := &Candidates{}
 	decoder := json.NewDecoder(f)
 	decoder.Decode(candidates)
 	candidates.updateTime = time.Unix(candidates.Ts, 0)
+    now := time.Now()
+    if candidates.updateTime.After(now) {
+        fmt.Println("Package updated")
+    }
 	return candidates
 }
 

@@ -5,8 +5,8 @@ import (
 	"testing"
 )
 
-func checkSolve(file string, expected []string, unexpected []string, t *testing.T) {
-	candidates := loadCandidates()
+func checkSolve(file string, expected []string, unexpected []string, cacheUpdate bool, t *testing.T) {
+	candidates := loadCandidates(cacheUpdate)
 	r, err := solveImports(candidates, file)
 	if err != nil {
 		t.Fatal(err)
@@ -34,7 +34,7 @@ func TestComplexFile(t *testing.T) {
 		"reflect",
 		"strconv",
 	}
-	checkSolve("tests/fix_test.go", expected, []string{}, t)
+	checkSolve("tests/fix_test.go", expected, []string{}, true, t)
 }
 
 func TestSolveAddImports(t *testing.T) {
@@ -43,10 +43,10 @@ func TestSolveAddImports(t *testing.T) {
 		"\"go/ast\"",
 		"A comment",
 	}
-	checkSolve("tests/add_imports.go", expected, []string{}, t)
+	checkSolve("tests/add_imports.go", expected, []string{}, false, t)
 }
 
 func TestRemoveUseless(t *testing.T) {
 	unexpected := []string{"\"os\""}
-	checkSolve("tests/remove_imports.go", []string{}, unexpected, t)
+	checkSolve("tests/remove_imports.go", []string{}, unexpected, false, t)
 }
