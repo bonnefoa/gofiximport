@@ -18,7 +18,11 @@ var gofiximportDir = os.ExpandEnv("$HOME/.gofiximport")
 var cachePath = filepath.Join(gofiximportDir, "cache")
 
 var gopaths []string
-var visited map[string]bool
+
+type pathContext struct {
+    candidates *Candidates
+    visited map[string]bool
+}
 
 // Candidates are elligible package
 type Candidates struct {
@@ -90,7 +94,7 @@ func parsePackage(packagePath string,
 func processPackage(path string, candidates *Candidates) {
 	f, err := parsePackage(path, 0)
 	if err != nil {
-		fmt.Printf("Error on package parse %q\n", err)
+		fmt.Printf("Error on package parse, ignoring file. %q\n", err)
 		return
 	}
 	if f == nil {
@@ -106,7 +110,9 @@ func processPackage(path string, candidates *Candidates) {
 }
 
 func walkFun(ctx interface{}, path string, info os.FileInfo, err error) error {
-	candidates := ctx.(*Candidates)
+    context := ctx.(*pathContext)
+    candidates := context.candidates
+    visited := context.visited
 	if info.ModTime().Before(candidates.updateTime) {
 		return filepath.SkipDir
 	}
@@ -135,18 +141,19 @@ func walkFun(ctx interface{}, path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return nil
 		}
-		return PathWalk(candidates, symPath, walkFun)
+		return PathWalk(context, symPath, walkFun)
 	}
 	processPackage(path, candidates)
 	return nil
 }
 
 func updateCandidates() *Candidates {
-	visited = map[string]bool{}
+    visited := map[string]bool{}
 	candidates := &Candidates{Pkgs: map[string]map[string]bool{}, Ts: 0}
+    context := &pathContext{ candidates, visited }
 
 	for _, path := range gopaths {
-		PathWalk(candidates, path, walkFun)
+		PathWalk(context, path, walkFun)
 	}
 	saveCandidates(candidates)
 	return candidates
