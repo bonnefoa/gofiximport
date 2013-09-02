@@ -6,8 +6,10 @@ import (
 	"path/filepath"
 )
 
+// PathWalkFunc is called on each file found by PathWalk
 type PathWalkFunc func(ctx interface{}, path string, info os.FileInfo, err error) error
 
+// PathWalk recursively traverse all files, passing ctx as first argument
 func PathWalk(ctx interface{}, root string, walkFn PathWalkFunc) error {
 	info, err := os.Lstat(root)
 	if err != nil {
@@ -16,7 +18,7 @@ func PathWalk(ctx interface{}, root string, walkFn PathWalkFunc) error {
 	return pathWalk(ctx, root, info, walkFn)
 }
 
-// walk recursively descends path, calling w.
+// walk recursively descends path, calling walkFn.
 func pathWalk(ctx interface{}, path string,
 	info os.FileInfo, walkFn PathWalkFunc) error {
 	err := walkFn(ctx, path, info, nil)
