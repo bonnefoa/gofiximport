@@ -94,7 +94,9 @@ func parsePackage(packagePath string,
 func processPackage(path string, candidates *Candidates) {
 	f, err := parsePackage(path, 0)
 	if err != nil {
-		fmt.Printf("Error on package parse, ignoring file. %q\n", err)
+        if *verboseFlag {
+            fmt.Printf("Error on package parse, ignoring file. %q\n", err)
+        }
 		return
 	}
 	if f == nil {
@@ -168,10 +170,13 @@ func loadCandidates(cacheUpdate bool) *Candidates {
 	decoder := json.NewDecoder(f)
 	decoder.Decode(candidates)
 	candidates.updateTime = time.Unix(candidates.Ts, 0)
-    now := time.Now()
-    if candidates.updateTime.After(now) {
-        fmt.Println("Package updated")
+
+    // Checking most recent modification
+    t := mostRecentModification(gopaths)
+    if t.After(candidates.updateTime) {
+        return updateCandidates()
     }
+
 	return candidates
 }
 

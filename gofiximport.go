@@ -13,6 +13,7 @@ import (
 var fileFlag = flag.String("file", "", "File to process")
 var writeFlag = flag.Bool("w", false, "Write result to source file instead of stdout")
 var updateFlag = flag.Bool("u", false, "Force cache update")
+var verboseFlag = flag.Bool("v", false, "Activate verbose logs")
 
 func solveUnresolved(f *ast.File, candidates *Candidates,
 	imports map[string]string) {
