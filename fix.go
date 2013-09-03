@@ -547,7 +547,7 @@ func addImport(f *ast.File, ipath string) (added bool) {
 	if impDecl == nil {
 		impDecl = &ast.GenDecl{
 			Tok:    token.IMPORT,
-			TokPos: 1,
+            TokPos: f.End(),
 		}
 		f.Decls = append(f.Decls, nil)
 		copy(f.Decls[lastImport+2:], f.Decls[lastImport+1:])
