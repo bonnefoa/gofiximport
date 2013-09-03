@@ -54,16 +54,16 @@ func pathWalk(ctx interface{}, path string,
 func mostRecentWalk(ctx interface{}, path string, info os.FileInfo, err error) error {
 	t := ctx.(*time.Time)
 	if info.ModTime().After(*t) {
-        *t = info.ModTime()
+		*t = info.ModTime()
 	}
 	return nil
 }
 
 func mostRecentModification(paths []string) time.Time {
-    loc, _ := time.LoadLocation("UTC")
-    t := time.Date(2001, 1, 1, 1, 1, 1, 0, loc)
-    for _, path := range gopaths {
-        PathWalk(&t, path, mostRecentWalk)
-    }
-    return t
+	loc, _ := time.LoadLocation("UTC")
+	t := time.Date(2001, 1, 1, 1, 1, 1, 0, loc)
+	for _, path := range gopaths {
+		PathWalk(&t, path, mostRecentWalk)
+	}
+	return t
 }

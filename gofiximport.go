@@ -76,7 +76,7 @@ func main() {
 	r, err := solveImports(candidates, *fileFlag)
 	if err != nil {
 		fmt.Print(err)
-        os.Exit(1)
+		os.Exit(1)
 	}
 	if *writeFlag {
 		ioutil.WriteFile(*fileFlag, r, 0)

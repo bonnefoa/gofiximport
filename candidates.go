@@ -20,8 +20,8 @@ var cachePath = filepath.Join(gofiximportDir, "cache")
 var gopaths []string
 
 type pathContext struct {
-    candidates *Candidates
-    visited map[string]bool
+	candidates *Candidates
+	visited    map[string]bool
 }
 
 // Candidates are elligible package
@@ -50,7 +50,7 @@ func fullPackageFromPath(path string) string {
 	}
 	path = strings.Replace(path, "src/", "", -1)
 	path = strings.Replace(path, "pkg/", "", -1)
-    path = strings.Trim(path, "/")
+	path = strings.Trim(path, "/")
 	return path
 }
 
@@ -95,9 +95,9 @@ func parsePackage(packagePath string,
 func processPackage(path string, candidates *Candidates) {
 	f, err := parsePackage(path, 0)
 	if err != nil {
-        if *verboseFlag {
-            fmt.Printf("Error on package parse, ignoring file. %q\n", err)
-        }
+		if *verboseFlag {
+			fmt.Printf("Error on package parse, ignoring file. %q\n", err)
+		}
 		return
 	}
 	if f == nil {
@@ -113,9 +113,9 @@ func processPackage(path string, candidates *Candidates) {
 }
 
 func walkFun(ctx interface{}, path string, info os.FileInfo, err error) error {
-    context := ctx.(*pathContext)
-    candidates := context.candidates
-    visited := context.visited
+	context := ctx.(*pathContext)
+	candidates := context.candidates
+	visited := context.visited
 	if info.ModTime().Before(candidates.updateTime) {
 		return filepath.SkipDir
 	}
@@ -151,9 +151,9 @@ func walkFun(ctx interface{}, path string, info os.FileInfo, err error) error {
 }
 
 func updateCandidates() *Candidates {
-    visited := map[string]bool{}
+	visited := map[string]bool{}
 	candidates := &Candidates{Pkgs: map[string]map[string]bool{}, Ts: 0}
-    context := &pathContext{ candidates, visited }
+	context := &pathContext{candidates, visited}
 
 	for _, path := range gopaths {
 		PathWalk(context, path, walkFun)
@@ -172,11 +172,11 @@ func loadCandidates(cacheUpdate bool) *Candidates {
 	decoder.Decode(candidates)
 	candidates.updateTime = time.Unix(candidates.Ts, 0)
 
-    // Checking most recent modification
-    t := mostRecentModification(gopaths)
-    if t.After(candidates.updateTime) {
-        return updateCandidates()
-    }
+	// Checking most recent modification
+	t := mostRecentModification(gopaths)
+	if t.After(candidates.updateTime) {
+		return updateCandidates()
+	}
 
 	return candidates
 }

@@ -524,11 +524,11 @@ func addImport(f *ast.File, ipath string) (added bool) {
 				continue
 			}
 
-            // Empty import group
-            if len(gen.Specs) == 0 {
-                impDecl = gen
-                continue
-            }
+			// Empty import group
+			if len(gen.Specs) == 0 {
+				impDecl = gen
+				continue
+			}
 
 			// Compute longest shared prefix with imports in this block.
 			for j, spec := range gen.Specs {
