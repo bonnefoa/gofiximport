@@ -35,7 +35,7 @@ func init() {
 	gopaths = strings.Split(os.Getenv("GOPATH"), ":")
 	r := runtime.GOROOT()
 	if r != "" {
-		gopaths = append(gopaths, r+"/src/pkg/")
+		gopaths = append(gopaths, filepath.Join(r, "src", "pkg"))
 	}
 }
 
@@ -50,6 +50,7 @@ func fullPackageFromPath(path string) string {
 	}
 	path = strings.Replace(path, "src/", "", -1)
 	path = strings.Replace(path, "pkg/", "", -1)
+    path = strings.Trim(path, "/")
 	return path
 }
 
